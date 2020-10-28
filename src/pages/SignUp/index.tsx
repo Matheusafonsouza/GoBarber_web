@@ -96,7 +96,7 @@ const SignUp: React.FC = () => {
             <a href="forgot">Esqueci minha senha</a>
           </Form>
 
-          <Link to="/signin">
+          <Link to="/">
             <FiArrowLeft />
             Voltar para login
           </Link>

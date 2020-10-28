@@ -11,7 +11,7 @@ import Route from './Route';
 
 const Routes: React.FC = () => (
   <Switch>
-    <Route exact path="/signin" component={SignIn} />
+    <Route exact path="/" component={SignIn} />
     <Route path="/signup" component={SignUp} />
     <Route path="/forgot-password" component={ForgotPassword} />
     <Route path="/reset-password" component={ResetPassword} />
