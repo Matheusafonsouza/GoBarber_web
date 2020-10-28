@@ -1,9 +1,11 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as Yup from 'yup';
 import { FiLogIn, FiMail } from 'react-icons/fi';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
+
+import api from '../../services/api';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 import { useToast } from '../../hooks/toast';
@@ -20,6 +22,7 @@ interface ForgotPasswordFormData {
 }
 
 const ForgotPassword: React.FC = () => {
+  const [loading, setLoading] = useState(false);
   const formRef = useRef<FormHandles>(null);
 
   const { addToast } = useToast();
@@ -27,6 +30,8 @@ const ForgotPassword: React.FC = () => {
   const handleSubmit = useCallback(
     async (data: ForgotPasswordFormData) => {
       try {
+        setLoading(true);
+
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
@@ -37,6 +42,17 @@ const ForgotPassword: React.FC = () => {
 
         await schema.validate(data, {
           abortEarly: false,
+        });
+
+        api.post('/password/forgot', {
+          email: data.email,
+        });
+
+        addToast({
+          type: 'success',
+          title: 'E-mail de recuperação enviado',
+          description:
+            'Enviamos um e-mail para confirmar a recuperação de senha, cheque sua caixa de entrada',
         });
 
         // history.push('/dashboard');
@@ -53,6 +69,8 @@ const ForgotPassword: React.FC = () => {
               'Ocorreu um erro ao tentar recuperar sua senha, cheque o email digitado',
           });
         }
+      } finally {
+        setLoading(false);
       }
     },
     [addToast],
@@ -69,7 +87,9 @@ const ForgotPassword: React.FC = () => {
 
             <Input icon={FiMail} name="email" placeholder="E-mail" />
 
-            <Button type="submit">Recuperar</Button>
+            <Button loading={loading} type="submit">
+              Recuperar
+            </Button>
           </Form>
 
           <Link to="/signin">
